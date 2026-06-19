@@ -2,16 +2,31 @@ const express = require('express');
 
 const app = express();
 
-
-app.get('/', (req, res) => {
-    res.send('Hello, World!');
+//This will match the GET, POST, PATCH, and DELETE methods for the /user route
+app.get('/user', (req, res) => {
+    console.log('GET User route');
+    res.send('GET User route');
 });
 
-app.get('/hello', (req, res) => {
-    res.send('Hello from the server');
+app.post('/user', (req, res) => {
+    console.log('POST User route');
+    res.send('POST User route');
 });
-app.get('/learn', (req, res) => {
-    res.send('Learning Node.js is fun!');
+
+app.patch('/user', (req, res) => {
+    console.log('PATCH User route');
+    res.send('PATCH User route');
+});
+
+app.delete('/user', (req, res) => {
+    console.log('DELETE User route');
+    res.send('DELETE User route');
+});
+
+// This will match all the HPP methods for the /user route
+app.use('/user', (req, res) => {
+    console.log('Fallback User route');
+    res.send('User route');
 });
 
 app.listen(3000, () => {
