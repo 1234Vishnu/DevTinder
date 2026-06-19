@@ -1,16 +1,25 @@
 {
-  "name": "dev-tinder",
+  "name": "devtinder",
   "version": "1.0.0",
-  "description": "Tinder Application For Dev",
-  "main": "app.js",
+  "description": "Developing this project to learn Node.js",
+  "homepage": "https://github.com/1234Vishnu/DevTinder#readme",
+  "bugs": {
+    "url": "https://github.com/1234Vishnu/DevTinder/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1234Vishnu/DevTinder.git"
+  },
+  "license": "ISC",
+  "author": "Vishnu",
+  "type": "commonjs",
+  "main": "index.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js"
   },
-  "author": "Vishnu",
-  "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0",
-    "nodemon": "^3.1.10"
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
   }
 }
