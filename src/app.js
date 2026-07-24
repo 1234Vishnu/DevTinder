@@ -1,26 +1,31 @@
 const express = require('express');
+const { connectDB } = require('../config/database'); // Import the database connection
 const app = express();
+const User = require('./middlewares/models/user');
 
-app.use('/', (err, req, res, next) => {
-  if (err) {
-    res.status(500).send('Something went wrong from "/1');
-  }
-});
-
-app.get('/getUserData', (req, res) => {
+app.post('/signup', async (req, res) => {
+  const user = new User({
+    name: 'vishnu',
+    email: 'vishnu@gmail.com',
+    password: 'vishnu123',
+    gender: 'male',
+    age: 30,
+  });
   try {
-    throw new Error('Simulated error in /getUserData route');
+    await user.save();
+    res.send('User created successfully');
   } catch (err) {
-    res.status(500).send('Something went wrong');
+    res.status(500).send('Error creating user: ' + err.message);
   }
 });
 
-app.use('/', (err, req, res, next) => {
-  if (err) {
-    res.status(500).send('Something went wrong from "/2');
-  }
-});
-
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
-});
+connectDB()
+  .then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(3000, () => {
+      console.log('Server is running on port 3000');
+    });
+  })
+  .catch((err) => {
+    console.error('Error connecting to MongoDB:', err);
+  });
