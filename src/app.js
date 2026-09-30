@@ -80,7 +80,9 @@ app.patch('/userEmail', async (req, res) => {
   const { email } = req.body;
   const dataToUpdate = req.body;
   try {
-    await User.findOneAndUpdate({ email: email }, dataToUpdate);
+    await User.findOneAndUpdate({ email: email }, dataToUpdate, {
+      runValidators: true, // Ensure that the update adheres to the schema validation rules
+    });
     res.send('User email updated successfully');
   } catch (err) {
     res.status(400).send('Error updating user email: ' + err.message);
