@@ -5,4 +5,8 @@ Episode - 7
 - Create a custom validate function for gender
 - Improve the DB schema
 - Put all appropriate validation on each field
-
+- API level validation on PATCH, POST API
+- Add validation on skills
+- Install validator library
+- Use validator library in password, email, photoURL fields
+- Allow updates only for specific fields in PATCH API.

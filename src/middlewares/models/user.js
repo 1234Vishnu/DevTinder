@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const validator = require('validator');
 
 const userSchema = new Schema(
   {
@@ -16,10 +17,20 @@ const userSchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error('Invalid email address' + value);
+        }
+      },
     },
     password: {
       type: String,
       required: true,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error('Password is not strong enough');
+        }
+      },
     },
     gender: {
       type: String,
@@ -38,6 +49,11 @@ const userSchema = new Schema(
     photoUrl: {
       type: String,
       default: 'https://www.flaticon.com/free-icon/user_149071',
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error('Invalid URL for photo');
+        }
+      },
     },
     about: {
       type: String,
@@ -45,6 +61,11 @@ const userSchema = new Schema(
     },
     skills: {
       type: [String],
+      validate(value) {
+        if (value.length > 5) {
+          throw new Error('Skills cannot have more than 5 skills');
+        }
+      },
     },
   },
   { timestamps: true }

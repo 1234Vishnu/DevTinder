@@ -2,6 +2,7 @@ const express = require('express');
 const { connectDB } = require('../config/database'); // Import the database connection
 const app = express();
 const User = require('./middlewares/models/user');
+const { validateUserData } = require('./ValidateUser');
 
 app.use(express.json()); // Middleware to parse JSON request bodies
 
@@ -60,11 +61,14 @@ app.delete('/user', async (req, res) => {
 });
 
 // Endpoint to update a user by ID
-app.patch('/user', async (req, res) => {
-  const { userId } = req.body;
+app.patch('/user/:userId', async (req, res) => {
+  const { userId } = req.params;
   const dataToUpdate = req.body;
   try {
-    const user = await User.findByIdAndUpdate(userId, dataToUpdate);
+    validateUserData(dataToUpdate); // Validate the update data
+    const user = await User.findByIdAndUpdate(userId, dataToUpdate, {
+      runValidators: true, // Ensure that the update adheres to the schema validation rules
+    });
     if (!user) {
       res.status(404).send('User not found');
     } else {
@@ -76,10 +80,11 @@ app.patch('/user', async (req, res) => {
 });
 
 // Endpoint to update a user's name by email
-app.patch('/userEmail', async (req, res) => {
-  const { email } = req.body;
+app.patch('/userEmail/:email', async (req, res) => {
+  const { email } = req.params;
   const dataToUpdate = req.body;
   try {
+    validateUserData(dataToUpdate); // Validate the update data
     await User.findOneAndUpdate({ email: email }, dataToUpdate, {
       runValidators: true, // Ensure that the update adheres to the schema validation rules
     });
