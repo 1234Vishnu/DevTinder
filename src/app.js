@@ -2,7 +2,9 @@ const express = require('express');
 const { connectDB } = require('../config/database'); // Import the database connection
 const app = express();
 const User = require('./middlewares/models/user');
-const { validateUserData } = require('./ValidateUser');
+const { validateUserData } = require('./utils/validateUser');
+const { validateSignup } = require('./utils/validateSignup');
+const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
 
 app.use(express.json()); // Middleware to parse JSON request bodies
 
@@ -10,8 +12,33 @@ app.use(express.json()); // Middleware to parse JSON request bodies
 app.post('/signup', async (req, res) => {
   //Creating a new instance of the User model.
   console.log(req.body);
-  const user = new User(req.body);
   try {
+    //validate the signup data
+    validateSignup(req);
+    //Create password Encryption
+    const {
+      firstName,
+      lastName,
+      email,
+      password, // Store the hashed password
+      gender,
+      age,
+      photoUrl,
+      skills,
+      about,
+    } = req.body;
+    const passwordHash = await bcrypt.hash(password, 10); // Hash the password with a salt round of 10
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password: passwordHash, // Store the hashed password
+      gender,
+      age,
+      photoUrl,
+      skills,
+      about,
+    });
     await user.save();
     res.send('User created successfully');
   } catch (err) {

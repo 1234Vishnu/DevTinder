@@ -1,4 +1,4 @@
-Episode - 7
+**Episode - 7**
 
 - Explore schema type options from documentation
 - Explore required, lowercase, uppercase, trim, unique, min, max, default, timestamp
@@ -10,3 +10,9 @@ Episode - 7
 - Install validator library
 - Use validator library in password, email, photoURL fields
 - Allow updates only for specific fields in PATCH API.
+
+**Episode - 8**
+
+- Validate signup data using helper function
+- Install Bcrypt package
+- Create a password hash using bcrypt package and save the Encrypt password of the user in DB.
