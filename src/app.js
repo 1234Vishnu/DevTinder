@@ -46,6 +46,26 @@ app.post('/signup', async (req, res) => {
   }
 });
 
+//Endpoint to login a user
+app.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      res.status(404).send('Invalid credentials');
+    } else {
+      const isPasswordValid = await bcrypt.compare(password, user.password); // Compare the provided password with the hashed password
+      if (isPasswordValid) {
+        res.send('Login successful');
+      } else {
+        res.status(401).send('Invalid credentials');
+      }
+    }
+  } catch (err) {
+    res.status(500).send('Error creating user: ' + err.message);
+  }
+});
+
 // Endpoint to fetch all users
 app.get('/users', async (req, res) => {
   const allUsers = User.find({});

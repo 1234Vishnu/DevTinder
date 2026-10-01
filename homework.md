@@ -16,3 +16,5 @@
 - Validate signup data using helper function
 - Install Bcrypt package
 - Create a password hash using bcrypt package and save the Encrypt password of the user in DB.
+- Create Login API
+- Validate the user and throw error for invalid email and password
