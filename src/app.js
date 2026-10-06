@@ -5,8 +5,11 @@ const User = require('./middlewares/models/user');
 const { validateUserData } = require('./utils/validateUser');
 const { validateSignup } = require('./utils/validateSignup');
 const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
+const cookieParser = require('cookie-parser'); // Import cookie-parser middleware
+const jwt = require('jsonwebtoken'); // Import jsonwebtoken for token generation
 
 app.use(express.json()); // Middleware to parse JSON request bodies
+app.use(cookieParser()); // Middleware to parse cookies
 
 // Endpoint to create a new user
 app.post('/signup', async (req, res) => {
@@ -56,6 +59,8 @@ app.post('/login', async (req, res) => {
     } else {
       const isPasswordValid = await bcrypt.compare(password, user.password); // Compare the provided password with the hashed password
       if (isPasswordValid) {
+        const cookie = await jwt.sign({ email: user.email }, 'Vishnu@123');
+        res.cookie('token', cookie);
         res.send('Login successful');
       } else {
         res.status(401).send('Invalid credentials');
@@ -66,6 +71,23 @@ app.post('/login', async (req, res) => {
   }
 });
 
+//Endpoint to fetch the profile of the logged-in user
+app.get('/profile', async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      throw new Error('Unauthorized: No token provided');
+    }
+    const decoded = jwt.verify(token, 'Vishnu@123');
+    const user = await User.findOne({ email: decoded.email });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    res.send(user);
+  } catch (err) {
+    res.status(500).send('Error fetching profile: ' + err.message);
+  }
+});
 // Endpoint to fetch all users
 app.get('/users', async (req, res) => {
   const allUsers = User.find({});

@@ -18,3 +18,10 @@
 - Create a password hash using bcrypt package and save the Encrypt password of the user in DB.
 - Create Login API
 - Validate the user and throw error for invalid email and password
+
+**Episode -9**
+
+- Install Jsonwebtoken and cookie-parser.
+- Send dummy cookie to user and create profile API to get the cookie back.
+- In login API after email, password verification create JWT token and set it.
+- In profile API, read the cookie and find the logged in user.
