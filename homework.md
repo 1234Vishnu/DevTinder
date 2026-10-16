@@ -25,3 +25,9 @@
 - Send dummy cookie to user and create profile API to get the cookie back.
 - In login API after email, password verification create JWT token and set it.
 - In profile API, read the cookie and find the logged in user.
+- userAuth middleware
+- Add userAuth middleware in profile and sendConnection request API's
+- Set the expiry of JWT and cookies to '10s' and test
+- Create userSchema method to get JWT
+- Create userSchema method to compare passwordInputByUser
+

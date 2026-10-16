@@ -7,6 +7,7 @@ const { validateSignup } = require('./utils/validateSignup');
 const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
 const cookieParser = require('cookie-parser'); // Import cookie-parser middleware
 const jwt = require('jsonwebtoken'); // Import jsonwebtoken for token generation
+const { userAuth } = require('./middlewares/Auth'); // Import the userAuth middleware
 
 app.use(express.json()); // Middleware to parse JSON request bodies
 app.use(cookieParser()); // Middleware to parse cookies
@@ -57,10 +58,10 @@ app.post('/login', async (req, res) => {
     if (!user) {
       res.status(404).send('Invalid credentials');
     } else {
-      const isPasswordValid = await bcrypt.compare(password, user.password); // Compare the provided password with the hashed password
+      const isPasswordValid = await user.validatePassword(password);
       if (isPasswordValid) {
-        const cookie = await jwt.sign({ email: user.email }, 'Vishnu@123');
-        res.cookie('token', cookie);
+        const cookie = await user.getJWT();
+        res.cookie('token', cookie, { expires: new Date(Date.now() + 10000) }); // Set the cookie with the token
         res.send('Login successful');
       } else {
         res.status(401).send('Invalid credentials');
@@ -72,20 +73,21 @@ app.post('/login', async (req, res) => {
 });
 
 //Endpoint to fetch the profile of the logged-in user
-app.get('/profile', async (req, res) => {
+app.get('/profile', userAuth, async (req, res) => {
   try {
-    const token = req.cookies.token;
-    if (!token) {
-      throw new Error('Unauthorized: No token provided');
-    }
-    const decoded = jwt.verify(token, 'Vishnu@123');
-    const user = await User.findOne({ email: decoded.email });
-    if (!user) {
-      throw new Error('User not found');
-    }
+    const { user } = req; // Access the user object attached by the userAuth middleware
     res.send(user);
   } catch (err) {
     res.status(500).send('Error fetching profile: ' + err.message);
+  }
+});
+
+app.get('/sendConnectionRequest', userAuth, async (req, res) => {
+  try {
+    const { firstName } = req.user; // Access the user object attached by the userAuth middleware
+    res.send(firstName + ' ' + 'has sent the connection request');
+  } catch (err) {
+    res.status(500).send('Error sending connection request: ' + err.message);
   }
 });
 // Endpoint to fetch all users

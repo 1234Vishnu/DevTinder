@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const validator = require('validator');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
 
 const userSchema = new Schema(
   {
@@ -71,6 +73,19 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
+userSchema.methods.getJWT = async function () {
+  const user = this;
+  const cookie = await jwt.sign({ email: user.email }, 'Vishnu@123', { expiresIn: '30s' });
+  return cookie;
+};
+
+userSchema.methods.validatePassword = async function (passwordfromUser) {
+  const user = this;
+  const passwordHash = user.password; // Get the hashed password from the user document
+
+  const isPasswordValid = await bcrypt.compare(passwordfromUser, passwordHash);
+  return isPasswordValid;
+};
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
